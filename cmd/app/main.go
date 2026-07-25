@@ -23,7 +23,10 @@ func main() {
 	slog.SetDefault(logger)
 	// 1. Load application configuration
 	applicationCfg := appconfig.Load()
-
+	log.Println("===================================")
+	log.Println("Bucket :", applicationCfg.S3Bucket)
+	log.Println("Region :", applicationCfg.AWSRegion)
+	log.Println("===================================")
 	// 2. Root context
 	ctx := context.Background()
 
@@ -55,12 +58,18 @@ func main() {
 	// 6. Dependency Injection
 	bookService := service.NewBookService(repo, uploader)
 
-	handler := handler.NewBookHandler(bookService)
+	bookHandler := handler.NewBookHandler(bookService)
+
+	authService := service.NewAuthService()
+
+	authHandler := handler.NewAuthHandler(authService)
 
 	// 7. HTTP Server
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/books", handler.Books)
+	mux.HandleFunc("/books", bookHandler.Books)
+
+	mux.HandleFunc("/login", authHandler.Login)
 
 	logged := middleware.Logging(mux)
 

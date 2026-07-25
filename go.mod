@@ -5,6 +5,7 @@ go 1.26.5
 require (
 	github.com/aws/aws-sdk-go-v2/config v1.32.31
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.106.0
+	github.com/golang-jwt/jwt/v5 v5.3.1
 )
 
 require (

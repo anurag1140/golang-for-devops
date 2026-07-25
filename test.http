@@ -1,16 +1,26 @@
-### Get all books
-
-GET http://localhost:8080/books
-
-###
-
-POST http://localhost:8080/books
+### Login
+POST http://localhost:8080/login
 Content-Type: application/json
 
 {
-    "id":4,
-    "title":"Learning Go",
-    "author":"James Python",
-    "isbn":"99999",
+    "username":"admin",
+    "password":"password123"
+}
+
+###
+
+### Get Books (Public)
+GET http://localhost:8080/books
+
+### Add Book (Protected)
+POST http://localhost:8080/books
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImxpYnJhcmlhbiIsImV4cCI6MTc4NTA3MDIzNSwiaWF0IjoxNzg0OTgzODM1fQ.JW-KJQFpE2Zgh83ZuxekVM-1Ukk5QTY6zZUbiwVFAxw
+Content-Type: application/json
+
+{
+    "id":5,
+    "title":"Go Concurrency",
+    "author":"Katherine Cox",
+    "isbn":"55555",
     "available":true
 }

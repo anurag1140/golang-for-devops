@@ -2,8 +2,11 @@ package handler
 
 import (
 	"encoding/json"
+	"golang-for-devops/internal/auth"
+	"golang-for-devops/internal/handler/middleware"
 	"golang-for-devops/internal/models"
 	"golang-for-devops/internal/service"
+	"log"
 	"net/http"
 )
 
@@ -35,7 +38,10 @@ func (h *BookHandler) Books(w http.ResponseWriter, r *http.Request) {
 		h.GetBooks(w, r)
 
 	case http.MethodPost:
-		h.AddBook(w, r)
+
+		middleware.Auth(
+			http.HandlerFunc(h.AddBook),
+		).ServeHTTP(w, r)
 
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -46,23 +52,32 @@ func (h *BookHandler) AddBook(w http.ResponseWriter, r *http.Request) {
 
 	var book models.Book
 
-	// Convert JSON request into Go struct
-	err := json.NewDecoder(r.Body).Decode(&book)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&book); err != nil {
 		http.Error(w, "Invalid JSON", http.StatusBadRequest)
 		return
 	}
 
-	// Call service
+	// Read authenticated user from context
+	claims, ok := r.Context().
+		Value(auth.UserContextKey).(*auth.Claims)
+
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	// Temporary logging
+	log.Printf(
+		"User %s (%s) is adding a book",
+		claims.Username,
+		claims.Role,
+	)
+
+	// Business logic
 	if err := h.service.AddBook(r.Context(), book); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	// err = h.service.AddBook(book)
-	// if err != nil {
-	// 	http.Error(w, err.Error(), http.StatusBadRequest)
-	// 	return
-	// }
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
