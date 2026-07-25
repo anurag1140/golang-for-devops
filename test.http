@@ -1,0 +1,16 @@
+### Get all books
+
+GET http://localhost:8080/books
+
+###
+
+POST http://localhost:8080/books
+Content-Type: application/json
+
+{
+    "id":4,
+    "title":"Learning Go",
+    "author":"James Python",
+    "isbn":"99999",
+    "available":true
+}
