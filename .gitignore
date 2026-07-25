@@ -1,0 +1,13 @@
+# Personal notes
+golang-notes.md
+mynotes.md
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
