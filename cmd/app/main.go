@@ -151,7 +151,7 @@ func main() {
 				auth.RoleAdmin,
 			)(
 				http.HandlerFunc(
-					loanHandler.IssueBook,
+					loanHandler.BorrowBook,
 				),
 			),
 		),

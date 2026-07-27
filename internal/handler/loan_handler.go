@@ -21,7 +21,7 @@ func NewLoanHandler(
 	}
 }
 
-func (h *LoanHandler) IssueBook(
+func (h *LoanHandler) BorrowBook(
 	w http.ResponseWriter,
 	r *http.Request,
 ) {
@@ -39,7 +39,7 @@ func (h *LoanHandler) IssueBook(
 		return
 	}
 
-	err := h.service.IssueBook(
+	err := h.service.BorrowBook(
 		r.Context(),
 		loan,
 	)

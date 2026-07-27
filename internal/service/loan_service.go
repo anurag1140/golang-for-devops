@@ -19,12 +19,12 @@ func NewLoanService(
 	}
 }
 
-func (s *LoanService) IssueBook(
+func (s *LoanService) BorrowBook(
 	ctx context.Context,
 	loan models.Loan,
 ) error {
 
-	return s.repo.IssueBook(
+	return s.repo.BorrowBook(
 		ctx,
 		loan,
 	)

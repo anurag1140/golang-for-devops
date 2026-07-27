@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"golang-for-devops/internal/models"
 
 	"github.com/jackc/pgx/v5"
@@ -20,7 +21,7 @@ func NewPostgresLoanRepository(
 	}
 }
 
-func (r *PostgresLoanRepository) IssueBook(
+func (r *PostgresLoanRepository) BorrowBook(
 	ctx context.Context,
 	loan models.Loan,
 ) error {
@@ -120,4 +121,19 @@ func (r *PostgresLoanRepository) ReturnBook(
 	}
 
 	return tx.Commit(ctx)
+}
+
+func (r *PostgresLoanRepository) GetLoanByID(
+	ctx context.Context,
+	id int,
+) (models.Loan, error) {
+
+	return models.Loan{}, errors.New("not implemented")
+}
+
+func (r *PostgresLoanRepository) GetLoans(
+	ctx context.Context,
+) ([]models.Loan, error) {
+
+	return nil, errors.New("not implemented")
 }

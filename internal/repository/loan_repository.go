@@ -7,7 +7,7 @@ import (
 )
 
 type LoanRepository interface {
-	IssueBook(
+	BorrowBook(
 		context.Context,
 		models.Loan,
 	) error
@@ -16,4 +16,13 @@ type LoanRepository interface {
 		context.Context,
 		int,
 	) error
+
+	GetLoanByID(
+		ctx context.Context,
+		id int,
+	) (models.Loan, error)
+
+	GetLoans(
+		ctx context.Context,
+	) ([]models.Loan, error)
 }
