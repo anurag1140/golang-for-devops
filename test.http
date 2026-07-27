@@ -1,4 +1,4 @@
-### Login
+### Login as Admin
 POST http://localhost:8080/login
 Content-Type: application/json
 
@@ -9,12 +9,35 @@ Content-Type: application/json
 
 ###
 
+### Login as Librarian
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+    "username":"librarian",
+    "password":"password123"
+}
+
+###
+
+### Login as Member
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+    "username":"member",
+    "password":"password123"
+}
+
+###
+
 ### Get Books (Public)
 GET http://localhost:8080/books
 
+###
 ### Add Book (Protected)
 POST http://localhost:8080/books
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImxpYnJhcmlhbiIsImV4cCI6MTc4NTA3MDIzNSwiaWF0IjoxNzg0OTgzODM1fQ.JW-KJQFpE2Zgh83ZuxekVM-1Ukk5QTY6zZUbiwVFAxw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxpYnJhcmlhbiIsInJvbGUiOiJsaWJyYXJpYW4iLCJleHAiOjE3ODUwODIxOTAsImlhdCI6MTc4NTA4MTI5MH0.d10Jgp-9N6CDBchU8xMh0ZrGZe5fNikC2KWwJWN4dCo
 Content-Type: application/json
 
 {
@@ -23,4 +46,21 @@ Content-Type: application/json
     "author":"Katherine Cox",
     "isbn":"55555",
     "available":true
+}
+
+### Refresh Access Token
+
+POST http://localhost:8080/refresh
+Content-Type: application/json
+
+{
+    "refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNzg1MDk0MDI2LCJpYXQiOjE3ODUwODM5NDZ9.ukxX9jFiMZ-qjue4l9HrZO3wlrIu1j7jYY6IIT0t7Ug"
+}
+###
+
+POST http://localhost:8080/logout
+Content-Type: application/json
+
+{
+    "refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNzg1MDk0MDI2LCJpYXQiOjE3ODUwODM5NDZ9.ukxX9jFiMZ-qjue4l9HrZO3wlrIu1j7jYY6IIT0t7Ug"
 }

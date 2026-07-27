@@ -34,7 +34,9 @@ func (s *BookService) AddBook(
 		return err
 	}
 
-	s.repo.Add(book)
+	if err := s.repo.Add(ctx, book); err != nil {
+		return err
+	}
 
 	data, err := json.Marshal(book)
 	if err != nil {
@@ -60,10 +62,37 @@ func (s *BookService) AddBook(
 
 }
 
-func (s *BookService) GetAllBooks() []models.Book {
-	return s.repo.GetAll() //for now just delegation
+func (s *BookService) GetAllBooks(
+	ctx context.Context,
+) ([]models.Book, error) {
+
+	return s.repo.GetAll(ctx)
 }
 
-func (s *BookService) GetBookByID(id int) (models.Book, error) {
-	return s.repo.GetByID(id) //for now just delegation
+func (s *BookService) GetBookByID(
+	ctx context.Context,
+	id int,
+) (*models.Book, error) {
+
+	return s.repo.GetByID(ctx, id)
+}
+
+func (s *BookService) UpdateBook(
+	ctx context.Context,
+	book models.Book,
+) error {
+
+	if err := validator.ValidateBook(book); err != nil {
+		return err
+	}
+
+	return s.repo.Update(ctx, book)
+}
+
+func (s *BookService) DeleteBook(
+	ctx context.Context,
+	id int,
+) error {
+
+	return s.repo.Delete(ctx, id)
 }

@@ -1,11 +1,18 @@
 package repository
 
-import "golang-for-devops/internal/models"
+import (
+	"context"
+	"golang-for-devops/internal/models"
+)
 
 type BookRepository interface {
-	Add(book models.Book)
+	Add(context.Context, models.Book) error
 
-	GetAll() []models.Book
+	GetAll(context.Context) ([]models.Book, error)
 
-	GetByID(id int) (models.Book, error)
+	GetByID(context.Context, int) (*models.Book, error)
+
+	Update(context.Context, models.Book) error
+
+	Delete(context.Context, int) error
 }

@@ -3,11 +3,11 @@ package handler
 import (
 	"encoding/json"
 	"golang-for-devops/internal/auth"
-	"golang-for-devops/internal/handler/middleware"
 	"golang-for-devops/internal/models"
 	"golang-for-devops/internal/service"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 type BookHandler struct {
@@ -21,31 +21,32 @@ func NewBookHandler(service *service.BookService) *BookHandler {
 	}
 }
 
-func (h *BookHandler) GetBooks(w http.ResponseWriter, r *http.Request) {
+func (h *BookHandler) GetBooks(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 
-	books := h.service.GetAllBooks()
+	books, err := h.service.GetAllBooks(
+		r.Context(),
+	)
 
-	w.Header().Set("Content-Type", "application/json")
+	if err != nil {
+
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusInternalServerError,
+		)
+
+		return
+	}
+
+	w.Header().Set(
+		"Content-Type",
+		"application/json",
+	)
 
 	json.NewEncoder(w).Encode(books)
-}
-
-func (h *BookHandler) Books(w http.ResponseWriter, r *http.Request) {
-
-	switch r.Method {
-
-	case http.MethodGet:
-		h.GetBooks(w, r)
-
-	case http.MethodPost:
-
-		middleware.Auth(
-			http.HandlerFunc(h.AddBook),
-		).ServeHTTP(w, r)
-
-	default:
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-	}
 }
 
 func (h *BookHandler) AddBook(w http.ResponseWriter, r *http.Request) {
@@ -83,4 +84,92 @@ func (h *BookHandler) AddBook(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 
 	json.NewEncoder(w).Encode(book)
+}
+
+func (h *BookHandler) GetBookByID(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+
+	id, err := strconv.Atoi(r.PathValue("id"))
+
+	if err != nil {
+		http.Error(w, "Invalid book id", http.StatusBadRequest)
+		return
+	}
+
+	book, err := h.service.GetBookByID(
+		r.Context(),
+		id,
+	)
+
+	if err != nil {
+		http.Error(w, "Book not found", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	json.NewEncoder(w).Encode(book)
+}
+
+func (h *BookHandler) UpdateBook(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+
+	id, err := strconv.Atoi(r.PathValue("id"))
+
+	if err != nil {
+		http.Error(w, "Invalid book id", http.StatusBadRequest)
+		return
+	}
+
+	var book models.Book
+
+	if err := json.NewDecoder(r.Body).Decode(&book); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+
+	book.ID = id
+
+	err = h.service.UpdateBook(
+		r.Context(),
+		book,
+	)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	json.NewEncoder(w).Encode(book)
+}
+
+func (h *BookHandler) DeleteBook(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+
+	id, err := strconv.Atoi(r.PathValue("id"))
+
+	if err != nil {
+		http.Error(w, "Invalid book id", http.StatusBadRequest)
+		return
+	}
+
+	err = h.service.DeleteBook(
+		r.Context(),
+		id,
+	)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }

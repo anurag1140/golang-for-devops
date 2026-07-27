@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"errors"
 	"golang-for-devops/internal/models"
 	"sync"
@@ -20,26 +21,77 @@ func NewBookRepository() *InMemoryBookRepository { //This method belongs to the 
 		books: []models.Book{},
 	}
 }
-func (r *InMemoryBookRepository) Add(book models.Book) {
+func (r *InMemoryBookRepository) Add(
+	ctx context.Context,
+	book models.Book,
+) error {
 
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	r.books = append(r.books, book) // append a new slice header and always returns back
-}
-func (r *InMemoryBookRepository) GetAll() []models.Book {
+	r.books = append(r.books, book)
 
-	return r.books
+	return nil
 }
 
-func (r *InMemoryBookRepository) GetByID(id int) (models.Book, error) {
+func (r *InMemoryBookRepository) GetAll(
+	ctx context.Context,
+) ([]models.Book, error) {
 
-	for _, book := range r.books { //foreach - range is used . _ means - I do not need index.
+	return r.books, nil
+}
+
+func (r *InMemoryBookRepository) GetByID(
+	ctx context.Context,
+	id int,
+) (*models.Book, error) {
+
+	for _, book := range r.books {
 
 		if book.ID == id {
-			return book, nil
+
+			return &book, nil
 		}
 	}
 
-	return models.Book{}, errors.New("book not found.") // error handling - Go returns an empty struct plus an error
+	return nil, errors.New("book not found")
+}
+
+func (r *InMemoryBookRepository) Update(
+	ctx context.Context,
+	updated models.Book,
+) error {
+
+	for i := range r.books {
+
+		if r.books[i].ID == updated.ID {
+
+			r.books[i] = updated
+
+			return nil
+		}
+	}
+
+	return errors.New("book not found")
+}
+
+func (r *InMemoryBookRepository) Delete(
+	ctx context.Context,
+	id int,
+) error {
+
+	for i := range r.books {
+
+		if r.books[i].ID == id {
+
+			r.books = append(
+				r.books[:i],
+				r.books[i+1:]...,
+			)
+
+			return nil
+		}
+	}
+
+	return errors.New("book not found")
 }
