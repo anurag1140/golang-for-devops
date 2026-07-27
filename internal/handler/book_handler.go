@@ -21,13 +21,29 @@ func NewBookHandler(service *service.BookService) *BookHandler {
 	}
 }
 
+// GetBooks godoc
+//
+// @Summary Get books
+// @Description Returns all books
+// @Tags Books
+// @Produce json
+// @Param page query int false "Page number"
+// @Param size query int false "Page size"
+// @Param title query string false "Filter by title"
+// @Param author query string false "Filter by author"
+// @Success 200 {array} models.Book
+// @Failure 500 {object} models.ErrorResponse
+// @Router /books [get]
 func (h *BookHandler) GetBooks(
 	w http.ResponseWriter,
 	r *http.Request,
 ) {
 
-	books, err := h.service.GetAllBooks(
+	query := ParseBookQuery(r)
+
+	books, err := h.service.SearchBooks(
 		r.Context(),
+		query,
 	)
 
 	if err != nil {
@@ -49,6 +65,19 @@ func (h *BookHandler) GetBooks(
 	json.NewEncoder(w).Encode(books)
 }
 
+// AddBook godoc
+//
+// @Summary Add book
+// @Description Adds a new book
+// @Tags Books
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body models.Book true "Book"
+// @Success 201 {object} models.Book
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 401 {object} models.ErrorResponse
+// @Router /books [post]
 func (h *BookHandler) AddBook(w http.ResponseWriter, r *http.Request) {
 
 	var book models.Book
@@ -86,6 +115,16 @@ func (h *BookHandler) AddBook(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(book)
 }
 
+// GetBookByID godoc
+//
+// @Summary Get book by ID
+// @Description Returns one book
+// @Tags Books
+// @Produce json
+// @Param id path int true "Book ID"
+// @Success 200 {object} models.Book
+// @Failure 404 {object} models.ErrorResponse
+// @Router /books/{id} [get]
 func (h *BookHandler) GetBookByID(
 	w http.ResponseWriter,
 	r *http.Request,

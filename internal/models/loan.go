@@ -3,9 +3,15 @@ package models
 import "time"
 
 type Loan struct {
-	ID         int
-	BookId     int
-	MemberId   int
-	IssueDate  time.Time
-	ReturnDate time.Time
+	ID int
+
+	BookID int
+
+	MemberUsername string
+
+	IssuedAt time.Time
+
+	DueDate time.Time
+
+	ReturnedAt *time.Time
 }

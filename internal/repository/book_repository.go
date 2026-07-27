@@ -15,4 +15,9 @@ type BookRepository interface {
 	Update(context.Context, models.Book) error
 
 	Delete(context.Context, int) error
+
+	Search(
+		context.Context,
+		models.BookQuery,
+	) ([]models.Book, error)
 }

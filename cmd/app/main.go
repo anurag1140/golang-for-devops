@@ -16,10 +16,22 @@ import (
 	"golang-for-devops/internal/service"
 	"golang-for-devops/internal/storage"
 
+	_ "golang-for-devops/docs"
+
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
+// @title Library API
+// @version 1.0
+// @description Library Management System API
+// @host localhost:8080
+// @BasePath /
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func main() {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
@@ -58,6 +70,15 @@ func main() {
 	// seedBooks(repo)
 	// 6. Dependency Injection
 	bookService := service.NewBookService(bookRepo, uploader)
+	loanRepo := repository.NewPostgresLoanRepository(db)
+
+	loanService := service.NewLoanService(
+		loanRepo,
+	)
+
+	loanHandler := handler.NewLoanHandler(
+		loanService,
+	)
 
 	bookHandler := handler.NewBookHandler(bookService)
 	userRepo := repository.NewPostgresUserRepository(db)
@@ -74,6 +95,8 @@ func main() {
 
 	// 7. HTTP Server
 	mux := http.NewServeMux()
+
+	mux.Handle("GET /swagger/", httpSwagger.WrapHandler)
 
 	// Public routes
 	mux.HandleFunc("POST /login", authHandler.Login)
@@ -120,6 +143,34 @@ func main() {
 		),
 	)
 
+	mux.Handle(
+		"POST /loans",
+		middleware.Auth(
+			middleware.RequireRole(
+				auth.RoleLibrarian,
+				auth.RoleAdmin,
+			)(
+				http.HandlerFunc(
+					loanHandler.IssueBook,
+				),
+			),
+		),
+	)
+
+	mux.Handle(
+		"POST /returns/{bookId}",
+		middleware.Auth(
+			middleware.RequireRole(
+				auth.RoleLibrarian,
+				auth.RoleAdmin,
+			)(
+				http.HandlerFunc(
+					loanHandler.ReturnBook,
+				),
+			),
+		),
+	)
+	mux.Handle("/swagger/", httpSwagger.WrapHandler)
 	logged := middleware.Logging(mux)
 
 	log.Println("POST /login")

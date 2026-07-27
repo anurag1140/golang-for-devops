@@ -62,13 +62,6 @@ func (s *BookService) AddBook(
 
 }
 
-func (s *BookService) GetAllBooks(
-	ctx context.Context,
-) ([]models.Book, error) {
-
-	return s.repo.GetAll(ctx)
-}
-
 func (s *BookService) GetBookByID(
 	ctx context.Context,
 	id int,
@@ -95,4 +88,15 @@ func (s *BookService) DeleteBook(
 ) error {
 
 	return s.repo.Delete(ctx, id)
+}
+
+func (s *BookService) SearchBooks(
+	ctx context.Context,
+	query models.BookQuery,
+) ([]models.Book, error) {
+
+	return s.repo.Search(
+		ctx,
+		query,
+	)
 }

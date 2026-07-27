@@ -17,7 +17,18 @@ func NewAuthHandler(service *service.AuthService) *AuthHandler {
 	}
 }
 
-// Login end point
+// Login godoc
+//
+// @Summary Login
+// @Description Authenticate a user and return JWT tokens
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param request body models.LoginRequest true "Login credentials"
+// @Success 200 {object} models.LoginResponse
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 401 {object} models.ErrorResponse
+// @Router /login [post]
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 	var request models.LoginRequest

@@ -95,3 +95,14 @@ func (r *InMemoryBookRepository) Delete(
 
 	return errors.New("book not found")
 }
+
+func (r *InMemoryBookRepository) Search(
+	ctx context.Context,
+	query models.BookQuery,
+) ([]models.Book, error) {
+
+	// For now just return all books.
+	// We'll enhance filtering later if needed.
+
+	return r.GetAll(ctx)
+}

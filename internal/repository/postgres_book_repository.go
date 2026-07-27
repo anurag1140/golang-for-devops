@@ -2,6 +2,8 @@ package repository
 
 import (
 	"context"
+	"fmt"
+	"strconv"
 
 	"golang-for-devops/internal/models"
 
@@ -50,15 +52,15 @@ func (r *PostgresBookRepository) GetAll(
 	rows, err := r.db.Query(
 		ctx,
 		`
-		SELECT
-			id,
-			title,
-			author,
-			isbn,
-			available
-		FROM books
-		ORDER BY id
-		`,
+        SELECT
+            id,
+            title,
+            author,
+            isbn,
+            available
+        FROM books
+        ORDER BY id
+        `,
 	)
 
 	if err != nil {
@@ -101,15 +103,15 @@ func (r *PostgresBookRepository) GetByID(
 	err := r.db.QueryRow(
 		ctx,
 		`
-		SELECT
-			id,
-			title,
-			author,
-			isbn,
-			available
-		FROM books
-		WHERE id=$1
-		`,
+        SELECT
+            id,
+            title,
+            author,
+            isbn,
+            available
+        FROM books
+        WHERE id=$1
+        `,
 		id,
 	).Scan(
 		&book.ID,
@@ -134,14 +136,14 @@ func (r *PostgresBookRepository) Update(
 	_, err := r.db.Exec(
 		ctx,
 		`
-		UPDATE books
-		SET
-			title=$1,
-			author=$2,
-			isbn=$3,
-			available=$4
-		WHERE id=$5
-		`,
+        UPDATE books
+        SET
+            title=$1,
+            author=$2,
+            isbn=$3,
+            available=$4
+        WHERE id=$5
+        `,
 		book.Title,
 		book.Author,
 		book.ISBN,
@@ -160,11 +162,145 @@ func (r *PostgresBookRepository) Delete(
 	_, err := r.db.Exec(
 		ctx,
 		`
-		DELETE FROM books
-		WHERE id=$1
-		`,
+        DELETE FROM books
+        WHERE id=$1
+        `,
 		id,
 	)
 
 	return err
+}
+
+func (r *PostgresBookRepository) Search(
+	ctx context.Context,
+	query models.BookQuery,
+) ([]models.Book, error) {
+
+	sql := `
+	SELECT
+		id,
+		title,
+		author,
+		isbn,
+		available
+	FROM books
+	WHERE 1=1
+	`
+
+	args := []any{}
+	index := 1
+
+	// ---------- Filters ----------
+
+	if query.Title != "" {
+
+		sql += " AND LOWER(title) LIKE LOWER($" +
+			strconv.Itoa(index) + ")"
+
+		args = append(
+			args,
+			"%"+query.Title+"%",
+		)
+
+		index++
+	}
+
+	if query.Author != "" {
+
+		sql += " AND LOWER(author) LIKE LOWER($" +
+			strconv.Itoa(index) + ")"
+
+		args = append(
+			args,
+			"%"+query.Author+"%",
+		)
+
+		index++
+	}
+
+	// ---------- Sorting ----------
+
+	allowedSort := map[string]string{
+		"id":     "id",
+		"title":  "title",
+		"author": "author",
+	}
+
+	sortColumn := "id"
+
+	if value, ok := allowedSort[query.Sort]; ok {
+		sortColumn = value
+	}
+
+	sql += " ORDER BY " + sortColumn
+
+	// ---------- Pagination ----------
+
+	if query.Page < 1 {
+		query.Page = 1
+	}
+
+	if query.Size < 1 {
+		query.Size = 10
+	}
+
+	if query.Size > 100 {
+		query.Size = 100
+	}
+
+	offset := (query.Page - 1) * query.Size
+
+	sql += fmt.Sprintf(
+		" LIMIT $%d OFFSET $%d",
+		index,
+		index+1,
+	)
+
+	args = append(
+		args,
+		query.Size,
+		offset,
+	)
+
+	// ---------- Execute ----------
+
+	rows, err := r.db.Query(
+		ctx,
+		sql,
+		args...,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var books []models.Book
+
+	for rows.Next() {
+
+		var book models.Book
+
+		if err := rows.Scan(
+			&book.ID,
+			&book.Title,
+			&book.Author,
+			&book.ISBN,
+			&book.Available,
+		); err != nil {
+			return nil, err
+		}
+
+		books = append(
+			books,
+			book,
+		)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return books, nil
 }

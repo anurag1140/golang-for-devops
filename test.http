@@ -37,7 +37,7 @@ GET http://localhost:8080/books
 ###
 ### Add Book (Protected)
 POST http://localhost:8080/books
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxpYnJhcmlhbiIsInJvbGUiOiJsaWJyYXJpYW4iLCJleHAiOjE3ODUwODIxOTAsImlhdCI6MTc4NTA4MTI5MH0.d10Jgp-9N6CDBchU8xMh0ZrGZe5fNikC2KWwJWN4dCo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNzg1MTc2MjY4LCJpYXQiOjE3ODUxNzUzNjh9.6yDfbFZOc57m915u7vOB42hi4y2DtEfRuuD5H1gv6DY
 Content-Type: application/json
 
 {
@@ -54,7 +54,7 @@ POST http://localhost:8080/refresh
 Content-Type: application/json
 
 {
-    "refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNzg1MDk0MDI2LCJpYXQiOjE3ODUwODM5NDZ9.ukxX9jFiMZ-qjue4l9HrZO3wlrIu1j7jYY6IIT0t7Ug"
+    "refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNzg1MTg1NDQ4LCJpYXQiOjE3ODUxNzUzNjh9.vdRvzXpHGh5nLJ7nTTNXePvKvKFmhtbhFkHiQzNcpq4"
 }
 ###
 
@@ -62,5 +62,23 @@ POST http://localhost:8080/logout
 Content-Type: application/json
 
 {
-    "refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNzg1MDk0MDI2LCJpYXQiOjE3ODUwODM5NDZ9.ukxX9jFiMZ-qjue4l9HrZO3wlrIu1j7jYY6IIT0t7Ug"
+    "refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNzg1MTg1NDQ4LCJpYXQiOjE3ODUxNzUzNjh9.vdRvzXpHGh5nLJ7nTTNXePvKvKFmhtbhFkHiQzNcpq4"
 }
+
+###
+### Issue Book
+
+POST http://localhost:8080/loans
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNzg1MTc2MjY4LCJpYXQiOjE3ODUxNzUzNjh9.6yDfbFZOc57m915u7vOB42hi4y2DtEfRuuD5H1gv6DY
+Content-Type: application/json
+
+{
+    "bookId":1,
+    "memberUsername":"member",
+    "dueDate":"2026-08-10T00:00:00Z"
+}
+
+### Return Book
+
+POST http://localhost:8080/returns/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNzg1MTc2MjY4LCJpYXQiOjE3ODUxNzUzNjh9.6yDfbFZOc57m915u7vOB42hi4y2DtEfRuuD5H1gv6DY
