@@ -1,3 +1,7 @@
+# Golang Library Management API
+
+![Go CI](https://github.com/anurag1140/golang-for-devops/actions/workflows/go.yml/badge.svg)
+
 Go Library Management System
 
 Features
