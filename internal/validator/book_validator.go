@@ -1,18 +1,23 @@
 package validator
 
 import (
-	"errors"
 	"golang-for-devops/internal/models"
+
+	apierrors "golang-for-devops/internal/errors"
 )
 
 func ValidateBook(book models.Book) error {
 
 	if book.Title == "" {
-		return errors.New("title is required")
+		return apierrors.BadRequest(
+			"title is required",
+		)
 	}
 
 	if book.Author == "" {
-		return errors.New("author is required")
+		return apierrors.BadRequest(
+			"author is required",
+		)
 	}
 
 	return nil

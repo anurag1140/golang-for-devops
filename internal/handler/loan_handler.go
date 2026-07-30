@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	apierrors "golang-for-devops/internal/errors"
 	"golang-for-devops/internal/models"
 	"golang-for-devops/internal/service"
 	"net/http"
@@ -30,10 +31,9 @@ func (h *LoanHandler) BorrowBook(
 
 	if err := json.NewDecoder(r.Body).Decode(&loan); err != nil {
 
-		http.Error(
+		apierrors.WriteError(
 			w,
-			"Invalid JSON",
-			http.StatusBadRequest,
+			err,
 		)
 
 		return
@@ -46,10 +46,9 @@ func (h *LoanHandler) BorrowBook(
 
 	if err != nil {
 
-		http.Error(
+		apierrors.WriteError(
 			w,
-			err.Error(),
-			http.StatusBadRequest,
+			err,
 		)
 
 		return
@@ -69,10 +68,9 @@ func (h *LoanHandler) ReturnBook(
 
 	if err != nil {
 
-		http.Error(
+		apierrors.WriteError(
 			w,
-			"Invalid Book ID",
-			http.StatusBadRequest,
+			err,
 		)
 
 		return
@@ -85,10 +83,9 @@ func (h *LoanHandler) ReturnBook(
 
 	if err != nil {
 
-		http.Error(
+		apierrors.WriteError(
 			w,
-			err.Error(),
-			http.StatusBadRequest,
+			err,
 		)
 
 		return

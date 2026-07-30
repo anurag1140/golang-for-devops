@@ -6,6 +6,8 @@ import (
 	"strings"
 
 	"golang-for-devops/internal/auth"
+
+	apierrors "golang-for-devops/internal/errors"
 )
 
 func Auth(next http.Handler) http.Handler {
@@ -15,12 +17,18 @@ func Auth(next http.Handler) http.Handler {
 		header := r.Header.Get("Authorization")
 
 		if header == "" {
-			http.Error(w, "Missing Authorization header", http.StatusUnauthorized)
+			apierrors.WriteError(
+				w,
+				apierrors.Unauthorized(apierrors.CodeUnauthorized),
+			)
 			return
 		}
 
 		if !strings.HasPrefix(header, "Bearer ") {
-			http.Error(w, "Invalid Authorization header", http.StatusUnauthorized)
+			apierrors.WriteError(
+				w,
+				apierrors.Unauthorized(apierrors.CodeUnauthorized),
+			)
 			return
 		}
 
@@ -29,7 +37,10 @@ func Auth(next http.Handler) http.Handler {
 		claims, err := auth.ValidateToken(tokenString)
 
 		if err != nil {
-			http.Error(w, "Invalid token", http.StatusUnauthorized)
+			apierrors.WriteError(
+				w,
+				err,
+			)
 			return
 		}
 

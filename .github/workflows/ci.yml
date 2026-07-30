@@ -36,13 +36,16 @@ jobs:
       - name: Verify Modules
         run: go mod verify
 
-      - name: Go Format
-        run: go fmt ./...
+      - name: Format
+        run: gofmt -w .
 
-      - name: Go Vet
+      - name: Vet
         run: go vet ./...
 
-      - name: Run Unit Tests
+      - name: Lint
+        run: golangci-lint run
+
+      - name: Test
         run: go test ./...
 
       - name: Build Project

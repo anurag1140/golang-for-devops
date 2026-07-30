@@ -1,5 +1,18 @@
+
 {
     "cSpell.words": [
-        "appconfig"
+        "apierrors",
+        "appconfig",
+        "errcheck",
+        "ERRORLEVEL",
+        "golangci",
+        "gosimple",
+        "govet",
+        "healthcheck",
+        "ineffassign",
+        "initdb",
+        "isready",
+        "librarydb",
+        "staticcheck"
     ]
 }

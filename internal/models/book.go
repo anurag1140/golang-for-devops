@@ -2,13 +2,13 @@ package models
 
 import "fmt"
 
-// type Book struct {
-// 	ID        int
-// 	Title     string
-// 	Author    string
-// 	ISBN      string
-// 	Available bool
-// }
+//	type Book struct {
+//		ID        int
+//		Title     string
+//		Author    string
+//		ISBN      string
+//		Available bool
+//	}
 type Book struct {
 	ID        int    `json:"id"`
 	Title     string `json:"title"`

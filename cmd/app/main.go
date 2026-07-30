@@ -96,8 +96,6 @@ func main() {
 	// 7. HTTP Server
 	mux := http.NewServeMux()
 
-	mux.Handle("GET /swagger/", httpSwagger.WrapHandler)
-
 	// Public routes
 	mux.HandleFunc("POST /login", authHandler.Login)
 	mux.HandleFunc("POST /refresh", authHandler.Refresh)
@@ -171,13 +169,8 @@ func main() {
 		),
 	)
 	mux.Handle("/swagger/", httpSwagger.WrapHandler)
-	logged := middleware.Logging(mux)
 
-	log.Println("POST /login")
-	log.Println("POST /refresh")
-	log.Println("POST /logout")
-	log.Println("GET /books")
-	log.Println("POST /books")
+	logged := middleware.Logging(mux)
 
 	slog.Info("Server running on :8080")
 	log.Fatal(http.ListenAndServe(":8080", logged))

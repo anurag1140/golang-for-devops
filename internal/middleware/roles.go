@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"golang-for-devops/internal/auth"
+	apierrors "golang-for-devops/internal/errors"
 )
 
 func RequireRole(allowedRoles ...string) func(http.Handler) http.Handler {
@@ -16,7 +17,10 @@ func RequireRole(allowedRoles ...string) func(http.Handler) http.Handler {
 				Value(auth.UserContextKey).(*auth.Claims)
 
 			if !ok {
-				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+				apierrors.WriteError(
+					w,
+					apierrors.Unauthorized(apierrors.CodeUnauthorized),
+				)
 				return
 			}
 

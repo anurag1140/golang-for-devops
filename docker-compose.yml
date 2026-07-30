@@ -1,12 +1,8 @@
-version: "3.9"
-
 services:
 
   postgres:
     image: postgres:16
-
     container_name: library-postgres
-
     restart: always
 
     environment:
@@ -21,14 +17,20 @@ services:
       - postgres-data:/var/lib/postgresql/data
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
 
-  app:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
+  app:
     build: .
 
     container_name: library-api
 
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
     ports:
       - "8080:8080"

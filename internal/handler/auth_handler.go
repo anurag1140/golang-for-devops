@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	apierrors "golang-for-devops/internal/errors"
 	"golang-for-devops/internal/models"
 	"golang-for-devops/internal/service"
 	"net/http"
@@ -34,12 +35,19 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var request models.LoginRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		apierrors.WriteError(
+			w,
+			err,
+		)
 		return
 	}
 
 	if request.Username == "" || request.Password == "" {
-		http.Error(w, "username and password are required", http.StatusBadRequest)
+		// http.Error(w, "username and password are required", http.StatusBadRequest)
+		apierrors.WriteError(
+			w,
+			apierrors.BadRequest("username and password are required"),
+		)
 		return
 	}
 
@@ -49,12 +57,17 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnauthorized)
+		apierrors.WriteError(
+			w,
+			err,
+		)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(response)
+	apierrors.WriteJSON(
+		w,
+		http.StatusCreated,
+		response,
+	)
 }
 
 func (h *AuthHandler) Refresh(
@@ -65,7 +78,10 @@ func (h *AuthHandler) Refresh(
 	var request models.RefreshRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		apierrors.WriteError(
+			w,
+			err,
+		)
 		return
 	}
 
@@ -74,14 +90,18 @@ func (h *AuthHandler) Refresh(
 	)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnauthorized)
+		apierrors.WriteError(
+			w,
+			err,
+		)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	json.NewEncoder(w).Encode(response)
+	apierrors.WriteJSON(
+		w,
+		http.StatusCreated,
+		response,
+	)
 }
 
 func (h *AuthHandler) Logout(
@@ -92,7 +112,10 @@ func (h *AuthHandler) Logout(
 	var request models.LogoutRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		apierrors.WriteError(
+			w,
+			err,
+		)
 		return
 	}
 
@@ -101,7 +124,10 @@ func (h *AuthHandler) Logout(
 	)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		apierrors.WriteError(
+			w,
+			err,
+		)
 		return
 	}
 

@@ -5,6 +5,8 @@ import (
 	"errors"
 	"golang-for-devops/internal/models"
 	"sync"
+
+	apierrors "golang-for-devops/internal/errors"
 )
 
 type InMemoryBookRepository struct { //InMemoryBookRepository structure
@@ -72,7 +74,7 @@ func (r *InMemoryBookRepository) Update(
 		}
 	}
 
-	return errors.New("book not found")
+	return apierrors.BadRequest("Book not found")
 }
 
 func (r *InMemoryBookRepository) Delete(
@@ -93,7 +95,9 @@ func (r *InMemoryBookRepository) Delete(
 		}
 	}
 
-	return errors.New("book not found")
+	return apierrors.BadRequest(
+		"Book not found",
+	)
 }
 
 func (r *InMemoryBookRepository) Search(

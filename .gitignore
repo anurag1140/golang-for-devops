@@ -9,5 +9,24 @@ mynotes.md
 *.log
 
 # IDE
-.vscode/
+
+{
+    "cSpell.words": [
+        "apierrors",
+        "appconfig",
+        "errcheck",
+        "ERRORLEVEL",
+        "golangci",
+        "gosimple",
+        "govet",
+        "healthcheck",
+        "ineffassign",
+        "initdb",
+        "isready",
+        "librarydb",
+        "staticcheck"
+    ]
+}
+.vscode/*
+!.vscode/settings.json
 .idea/

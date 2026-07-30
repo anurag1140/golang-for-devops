@@ -1,26 +1,32 @@
 # Golang Library Management API
 
-![Go CI](https://github.com/anurag1140/golang-for-devops/actions/workflows/go.yml/badge.svg)
+![Go CI](https://github.com/anurag1140/golang-for-devops/actions/workflows/ci.yml/badge.svg)
 
 Go Library Management System
 
 Features
 --------
-✓ REST API
-✓ Clean Architecture
-✓ Repository Pattern
-✓ Dependency Injection
-✓ Middleware
-✓ Structured Logging
-✓ AWS SDK v2
-✓ Amazon S3 Integration
-✓ Context Propagation
-✓ Configuration Management
+## Features
+
+- REST API
+- JWT Authentication
+- RBAC Authorization
+- PostgreSQL
+- AWS S3 Integration
+- Swagger Documentation
+- Structured Logging
+- Docker & Docker Compose
+- GitHub Actions CI
+- golangci-lint
+- Clean Architecture
 
 Tech Stack
 ----------
 Go 1.26
 AWS S3
 Docker
-Terraform (Coming Soon)
-GitHub Actions (Coming Soon)
+GitHub Actions ✔
+Docker ✔
+AWS SDK v2 ✔
+Terraform (Planned)
+Kubernetes (Planned)

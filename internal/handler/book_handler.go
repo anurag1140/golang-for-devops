@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+
+	apierrors "golang-for-devops/internal/errors"
 )
 
 type BookHandler struct {
@@ -48,21 +50,19 @@ func (h *BookHandler) GetBooks(
 
 	if err != nil {
 
-		http.Error(
+		apierrors.WriteError(
 			w,
-			err.Error(),
-			http.StatusInternalServerError,
+			err,
 		)
 
 		return
 	}
 
-	w.Header().Set(
-		"Content-Type",
-		"application/json",
+	apierrors.WriteJSON(
+		w,
+		http.StatusCreated,
+		books,
 	)
-
-	json.NewEncoder(w).Encode(books)
 }
 
 // AddBook godoc
@@ -83,7 +83,10 @@ func (h *BookHandler) AddBook(w http.ResponseWriter, r *http.Request) {
 	var book models.Book
 
 	if err := json.NewDecoder(r.Body).Decode(&book); err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		apierrors.WriteError(
+			w,
+			err,
+		)
 		return
 	}
 
@@ -92,7 +95,10 @@ func (h *BookHandler) AddBook(w http.ResponseWriter, r *http.Request) {
 		Value(auth.UserContextKey).(*auth.Claims)
 
 	if !ok {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		apierrors.WriteError(
+			w,
+			apierrors.Unauthorized(apierrors.CodeUnauthorized),
+		)
 		return
 	}
 
@@ -109,10 +115,11 @@ func (h *BookHandler) AddBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-
-	json.NewEncoder(w).Encode(book)
+	apierrors.WriteJSON(
+		w,
+		http.StatusCreated,
+		book,
+	)
 }
 
 // GetBookByID godoc
@@ -133,7 +140,10 @@ func (h *BookHandler) GetBookByID(
 	id, err := strconv.Atoi(r.PathValue("id"))
 
 	if err != nil {
-		http.Error(w, "Invalid book id", http.StatusBadRequest)
+		apierrors.WriteError(
+			w,
+			err,
+		)
 		return
 	}
 
@@ -143,13 +153,20 @@ func (h *BookHandler) GetBookByID(
 	)
 
 	if err != nil {
-		http.Error(w, "Book not found", http.StatusNotFound)
+
+		apierrors.WriteError(
+			w,
+			err,
+		)
+
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-
-	json.NewEncoder(w).Encode(book)
+	apierrors.WriteJSON(
+		w,
+		http.StatusCreated,
+		book,
+	)
 }
 
 func (h *BookHandler) UpdateBook(
@@ -160,14 +177,20 @@ func (h *BookHandler) UpdateBook(
 	id, err := strconv.Atoi(r.PathValue("id"))
 
 	if err != nil {
-		http.Error(w, "Invalid book id", http.StatusBadRequest)
+		apierrors.WriteError(
+			w,
+			err,
+		)
 		return
 	}
 
 	var book models.Book
 
 	if err := json.NewDecoder(r.Body).Decode(&book); err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		apierrors.WriteError(
+			w,
+			err,
+		)
 		return
 	}
 
@@ -179,13 +202,18 @@ func (h *BookHandler) UpdateBook(
 	)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		apierrors.WriteError(
+			w,
+			err,
+		)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-
-	json.NewEncoder(w).Encode(book)
+	apierrors.WriteJSON(
+		w,
+		http.StatusCreated,
+		book,
+	)
 }
 
 func (h *BookHandler) DeleteBook(
@@ -196,7 +224,10 @@ func (h *BookHandler) DeleteBook(
 	id, err := strconv.Atoi(r.PathValue("id"))
 
 	if err != nil {
-		http.Error(w, "Invalid book id", http.StatusBadRequest)
+		apierrors.WriteError(
+			w,
+			err,
+		)
 		return
 	}
 
@@ -206,7 +237,10 @@ func (h *BookHandler) DeleteBook(
 	)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		apierrors.WriteError(
+			w,
+			err,
+		)
 		return
 	}
 

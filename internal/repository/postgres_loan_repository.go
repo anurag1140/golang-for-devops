@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"golang-for-devops/internal/database"
 	"golang-for-devops/internal/models"
 
 	"github.com/jackc/pgx/v5"
@@ -32,7 +33,7 @@ func (r *PostgresLoanRepository) BorrowBook(
 		return err
 	}
 
-	defer tx.Rollback(ctx)
+	defer database.SafeRollback(ctx, tx)
 
 	//--------------------------------
 	// Insert loan
@@ -88,7 +89,7 @@ func (r *PostgresLoanRepository) ReturnBook(
 		return err
 	}
 
-	defer tx.Rollback(ctx)
+	defer database.SafeRollback(ctx, tx)
 
 	_, err = tx.Exec(
 		ctx,
